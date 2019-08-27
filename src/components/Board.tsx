@@ -2,8 +2,13 @@ import * as React from "react";
 import styled from "styled-components";
 import Spot from "./Spot";
 
+type Player = {
+  name: string;
+  symbol: string;
+};
+
 type BoardProps = {
-  spots?: string[];
+  moves?: Array<Player | undefined>;
   onClickIndex(index: number): void;
 };
 
@@ -29,14 +34,19 @@ const BoardContainer = styled.div`
 `;
 
 const Board: React.SFC<BoardProps> = ({
-  spots = new Array(9).fill(""),
+  moves = new Array(9).fill(undefined),
   onClickIndex
 }) => {
   return (
     <BoardContainer>
-      {spots.map((spot, i) => (
-        <Spot disabled={!!spot} onClick={() => onClickIndex(i)} key={i}>
-          {spot}
+      {moves.map((player, i) => (
+        <Spot
+          title={player && player.name}
+          disabled={!!player}
+          onClick={() => onClickIndex(i)}
+          key={i}
+        >
+          {player && player.symbol}
         </Spot>
       ))}
     </BoardContainer>

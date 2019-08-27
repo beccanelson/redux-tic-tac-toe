@@ -28,7 +28,17 @@ describe("Board", () => {
   it("disables spots that have content", () => {
     const props = {
       onClickIndex: jest.fn(),
-      spots: ["😻", "", "", "", "", "", "", "", ""]
+      moves: [
+        { name: "Player 1", symbol: "😻" },
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined
+      ]
     };
 
     const { queryAllByRole } = render(<Board {...props}></Board>);
