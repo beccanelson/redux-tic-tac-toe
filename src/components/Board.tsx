@@ -7,7 +7,26 @@ type BoardProps = {
   onClickIndex(index: number): void;
 };
 
-const BoardContainer = styled.div``;
+const BoardContainer = styled.div`
+  max-width: 400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+
+  &::before {
+    content: "";
+    width: 0;
+    padding-bottom: 100%;
+    grid-row: 1 / 1;
+    grid-column: 1 / 1;
+  }
+
+  & > *:first-child {
+    grid-row: 1 / 1;
+    grid-column: 1 / 1;
+  }
+`;
 
 const Board: React.SFC<BoardProps> = ({
   spots = new Array(9).fill(""),
