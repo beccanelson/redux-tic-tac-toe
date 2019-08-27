@@ -1,7 +1,8 @@
 import { action } from "@storybook/addon-actions";
 import { storiesOf } from "@storybook/react";
 import React from "react";
-import Board from "../components/Board";
+import { Board } from "../components/Board";
+import { DEFAULT_BOARD } from "../reducers/game";
 
 const player1 = {
   name: "Player 1",
@@ -14,20 +15,19 @@ const player2 = {
 };
 
 storiesOf("Board", module)
-  .add("empty", () => <Board onClickIndex={action("click")}></Board>)
+  .add("empty", () => (
+    <Board moves={DEFAULT_BOARD} makeMove={action("click")}></Board>
+  ))
   .add("with moves", () => (
     <Board
-      onClickIndex={action("click")}
-      moves={[
-        player1,
-        undefined,
-        player2,
-        undefined,
-        player1,
-        player2,
-        undefined,
-        undefined,
-        player1
-      ]}
+      makeMove={action("click")}
+      moves={{
+        ...DEFAULT_BOARD,
+        0: player1,
+        2: player2,
+        4: player1,
+        5: player2,
+        8: player1
+      }}
     ></Board>
   ));
