@@ -1,13 +1,11 @@
 import * as React from "react";
 import styled from "styled-components";
 import Spot from "./Spot";
-import { Player } from "../types";
-import { AppState } from "../store";
-import { connect } from "react-redux";
+import { Board as BoardState } from "../types";
 
 type BoardProps = {
-  moves?: { [key: string]: Player | undefined };
-  makeMove(key: string): void;
+  board: BoardState;
+  makeMove(key: number): void;
 };
 
 const BoardContainer = styled.div`
@@ -31,19 +29,14 @@ const BoardContainer = styled.div`
   }
 `;
 
-export const Board: React.SFC<BoardProps> = ({ moves = {}, makeMove }) => {
+export const Board: React.SFC<BoardProps> = ({ board, makeMove }) => {
   return (
     <BoardContainer>
-      {Object.keys(moves).map(i => {
-        const player = moves[i];
+      {Object.keys(board).map(i => {
+        const marker = board[Number(i)];
         return (
-          <Spot
-            title={player && player.name}
-            disabled={!!player}
-            onClick={() => makeMove(i)}
-            key={i}
-          >
-            {player && player.symbol}
+          <Spot disabled={!!marker} onClick={() => makeMove(Number(i))} key={i}>
+            {marker}
           </Spot>
         );
       })}
@@ -51,8 +44,4 @@ export const Board: React.SFC<BoardProps> = ({ moves = {}, makeMove }) => {
   );
 };
 
-const mapStateToProps = (state: AppState) => ({
-  moves: state.board.board
-});
-
-export default connect(mapStateToProps)(Board);
+export default Board;

@@ -1,8 +1,8 @@
 import { createStore, combineReducers } from "redux";
-import boardReducer from "./reducers/board";
+import gameReducer from "./reducers/game";
 
 const rootReducer = combineReducers({
-  board: boardReducer
+  game: gameReducer
 });
 
 export type AppState = ReturnType<typeof rootReducer>;
