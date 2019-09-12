@@ -1,15 +1,17 @@
 import { Computer, Human, PlayerType, Level } from "../../../types";
-import reducer, { getInitialState } from "../game";
-import { createBoard } from "../../../game/utils";
+import reducer from "../game";
+import { createBoard, getInitialState } from "../../../game/utils";
 
 const player1: Human = {
-  id: "Player 1",
+  id: 1,
+  name: "Player 1",
   marker: "X",
   type: PlayerType.Human
 };
 
 const player2: Computer = {
-  id: "Player 2",
+  id: 2,
+  name: "Player 2",
   marker: "O",
   type: PlayerType.Computer,
   level: Level.Easy
@@ -17,21 +19,25 @@ const player2: Computer = {
 
 describe("game reducer", () => {
   describe("making a move", () => {
-    const initialState = getInitialState();
+    const initialState = getInitialState({ players: [player1, player2] });
     it("makes a move on the default board", () => {
       expect(
-        reducer(undefined, {
+        reducer(initialState, {
           type: "MAKE_MOVE",
           payload: { index: 2 }
         })
       ).toEqual({
         ...initialState,
-        board: createBoard(`
+        game: {
+          ...initialState.game,
+          board: createBoard(`
           - - X
           - - - 
           - - - 
         `),
-        currentPlayer: initialState.players[1]
+          currentPlayer: initialState.game.players[1]
+        },
+        log: ["Player 1 moved at spot 2"]
       });
     });
 
@@ -53,13 +59,17 @@ describe("game reducer", () => {
           })
         ).toEqual({
           ...initialState,
-          board: {
-            ...board,
-            8: player1.marker
+          game: {
+            ...initialState.game,
+            board: {
+              ...board,
+              8: player1.marker
+            },
+            currentPlayer: undefined,
+            done: true,
+            winner: player1
           },
-          currentPlayer: undefined,
-          done: true,
-          winner: player1
+          log: ["Player 1 moved at spot 8", "Player 1 wins!"]
         });
       });
     });

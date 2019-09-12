@@ -5,6 +5,7 @@ import { Board as BoardState } from "../types";
 
 type BoardProps = {
   board: BoardState;
+  done?: boolean;
   makeMove(key: number): void;
 };
 
@@ -29,13 +30,14 @@ const BoardContainer = styled.div`
   }
 `;
 
-export const Board: React.SFC<BoardProps> = ({ board, makeMove }) => {
+export const Board: React.SFC<BoardProps> = ({ board, makeMove, done }) => {
   return (
     <BoardContainer>
       {Object.keys(board).map(i => {
         const marker = board[Number(i)];
+        const disabled = !!marker || done;
         return (
-          <Spot disabled={!!marker} onClick={() => makeMove(Number(i))} key={i}>
+          <Spot disabled={disabled} onClick={() => makeMove(Number(i))} key={i}>
             {marker}
           </Spot>
         );

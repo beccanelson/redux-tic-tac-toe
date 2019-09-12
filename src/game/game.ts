@@ -1,4 +1,4 @@
-import { Board, Player, Game } from "./../types";
+import { Board, Game, Player } from "./../types";
 import { isFull } from "./board";
 
 const winningIndeces = [
@@ -34,23 +34,22 @@ export function getNextPlayer(players: Player[], currentPlayer?: Player) {
   return players.find(player => player.id !== currentPlayer.id);
 }
 
-export function isOver(game: Game) {
-  const { board, players } = game;
+export function isOver(board: Board, players: Player[]) {
   return isFull(board) || !!getWinner(board, players);
 }
 
-export function advanceGameState(game: Game, spotIndex: number) {
-  const { board, players, currentPlayer } = game;
+export function getNextState(game: Game, spotIndex: number) {
+  const { board, players, currentPlayer = players[0] } = game;
   const nextBoard = { ...board, [spotIndex]: currentPlayer.marker };
   const nextWinner = getWinner(nextBoard, players);
-  const isOver = !!nextWinner || isFull(nextBoard);
-  const nextPlayer = isOver ? undefined : getNextPlayer(players, currentPlayer);
+  const done = isOver(nextBoard, players);
+  const nextPlayer = done ? undefined : getNextPlayer(players, currentPlayer);
 
   return {
     ...game,
     board: nextBoard,
     winner: nextWinner,
     currentPlayer: nextPlayer,
-    done: isOver
+    done
   };
 }

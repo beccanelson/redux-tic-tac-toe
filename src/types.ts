@@ -11,7 +11,8 @@ export enum Level {
 }
 
 type BasePlayer = {
-  id: string;
+  id: any;
+  name: string;
   marker: string;
 };
 
@@ -31,7 +32,7 @@ export type Board = { [key: number]: Marker | undefined };
 export type Game = {
   board: Board;
   players: Player[];
-  currentPlayer: Player;
+  currentPlayer?: Player;
   winner?: Player;
   done?: boolean;
 };

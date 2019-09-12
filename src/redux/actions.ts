@@ -1,10 +1,5 @@
-const MAKE_MOVE = "MAKE_MOVE";
-const RESET = "RESET";
-const INITIALIZE_GAME = "INITIALIZE_GAME";
-
-interface InitializeGameAction {
-  type: typeof INITIALIZE_GAME;
-}
+export const MAKE_MOVE = "MAKE_MOVE";
+export const RESET = "RESET";
 
 interface MakeMoveAction {
   type: typeof MAKE_MOVE;
@@ -17,4 +12,4 @@ interface ResetAction {
   type: typeof RESET;
 }
 
-export type GameAction = InitializeGameAction | MakeMoveAction | ResetAction;
+export type GameAction = MakeMoveAction | ResetAction;

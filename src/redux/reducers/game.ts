@@ -1,52 +1,43 @@
-import { Human, PlayerType, Computer, Level, Game } from "./../../types";
+import { getNextState } from "../../game/game";
+import { getInitialState } from "../../game/utils";
 import { GameAction } from "../actions";
-import { createBoard } from "../../game/utils";
-import { advanceGameState } from "../../game";
+import { Game } from "./../../types";
 
-const INITIAL_BOARD = createBoard(`
-    - - - 
-    - - - 
-    - - - 
-  `);
+function getLogMessages(
+  prevState: Game,
+  nextState: Game,
+  index: number
+): string[] {
+  const messages = [];
+  if (prevState.currentPlayer) {
+    messages.push(`${prevState.currentPlayer.name} moved at spot ${index}`);
+  }
+  if (nextState.winner) {
+    messages.push(`${nextState.winner.name} wins!`);
+  } else if (nextState.done) {
+    messages.push(`It's a tie!`);
+  }
 
-const player1: Human = {
-  id: "Player 1",
-  marker: "X",
-  type: PlayerType.Human
-};
-
-const player2: Computer = {
-  id: "Player 2",
-  marker: "O",
-  type: PlayerType.Computer,
-  level: Level.Easy
-};
-
-const DEFAULT_STATE: Game = {
-  board: INITIAL_BOARD,
-  players: [player1, player2],
-  currentPlayer: player1,
-  winner: undefined,
-  done: false
-};
-
-export function getInitialState(props: Partial<Game> = {}) {
-  return {
-    ...DEFAULT_STATE,
-    ...props
-  };
+  return messages;
 }
 
-const game = (state = DEFAULT_STATE, action: GameAction) => {
+const game = (state = getInitialState(), action: GameAction) => {
   switch (action.type) {
     case "MAKE_MOVE": {
-      const spotIndex = action.payload.index;
-      const updatedState = advanceGameState(state, spotIndex);
-      return updatedState;
+      const { index } = action.payload;
+      const nextState = getNextState(state.game, index);
+      return {
+        ...state,
+        game: {
+          ...state.game,
+          ...nextState
+        },
+        log: [...state.log, ...getLogMessages(state.game, nextState, index)]
+      };
     }
 
     case "RESET": {
-      return DEFAULT_STATE;
+      return getInitialState();
     }
 
     default:
