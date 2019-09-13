@@ -12,7 +12,7 @@ const winningIndeces = [
   [2, 4, 6]
 ];
 
-export function getWinner(board: Board, players: Player[]) {
+export function getWinner(board: Board, players: Player[]): Player | undefined {
   const [player1, player2] = players;
   let winner = undefined;
   winningIndeces.forEach(row => {
@@ -26,12 +26,8 @@ export function getWinner(board: Board, players: Player[]) {
   return winner;
 }
 
-export function getNextPlayer(players: Player[], currentPlayer?: Player) {
-  if (!currentPlayer) {
-    const [player1] = players;
-    return player1;
-  }
-  return players.find(player => player.id !== currentPlayer.id);
+export function getNextPlayer(players: Player[], currentPlayer: Player) {
+  return players.find(player => player.id !== currentPlayer.id)!;
 }
 
 export function isOver(board: Board, players: Player[]) {
@@ -39,11 +35,11 @@ export function isOver(board: Board, players: Player[]) {
 }
 
 export function getNextState(game: Game, spotIndex: number) {
-  const { board, players, currentPlayer = players[0] } = game;
+  const { board, players, currentPlayer } = game;
   const nextBoard = { ...board, [spotIndex]: currentPlayer.marker };
   const nextWinner = getWinner(nextBoard, players);
   const done = isOver(nextBoard, players);
-  const nextPlayer = done ? undefined : getNextPlayer(players, currentPlayer);
+  const nextPlayer = getNextPlayer(players, currentPlayer);
 
   return {
     ...game,

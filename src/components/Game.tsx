@@ -1,18 +1,15 @@
 import * as React from "react";
-import { AppState } from "../redux/store";
-import { Game as GameState } from "../types";
-import { Dispatch } from "redux";
-import { GameAction, MAKE_MOVE, RESET } from "../redux/actions";
 import { connect } from "react-redux";
+import styled from "styled-components";
+import { reset, takeTurn } from "../redux/actions";
+import { AppState } from "../redux/store";
+import { Game as GameType, GameState } from "../types";
 import Board from "./Board";
 import Button from "./Button";
-import styled from "styled-components";
 import Log from "./Log";
 
-type GameProps = {
-  game: GameState;
-  log: string[];
-  makeMove(key: number): void;
+type GameProps = GameState & {
+  takeTurn(key: number): void;
   reset(): void;
 };
 
@@ -22,11 +19,14 @@ const ButtonWrapper = styled.div`
 `;
 
 type GameInfoProps = {
-  game: GameState;
+  game: GameType;
+  waitingForMove?: boolean;
 };
 
-const GameInfo: React.SFC<GameInfoProps> = ({ game }) => {
-  if (game.currentPlayer) {
+const GameInfo: React.SFC<GameInfoProps> = ({ game, waitingForMove }) => {
+  if (waitingForMove) {
+    return <p>Computer is thinking...</p>;
+  } else if (game.currentPlayer) {
     return (
       <p>
         Current Player:{" "}
@@ -40,12 +40,12 @@ const GameInfo: React.SFC<GameInfoProps> = ({ game }) => {
   }
 };
 
-const Game: React.SFC<GameProps> = ({ game, log, makeMove, reset }) => {
+const Game: React.SFC<GameProps> = ({ game, log, takeTurn, reset }) => {
   return (
     <div>
       <h1>Welcome to Tic Tac Toe!</h1>
-      <GameInfo game={game}></GameInfo>
-      <Board done={game.done} board={game.board} makeMove={makeMove}></Board>
+      <GameInfo game={game} waitingForMove={false}></GameInfo>
+      <Board done={game.done} board={game.board} makeMove={takeTurn}></Board>
       <ButtonWrapper>
         <Button onClick={reset}>Reset</Button>
       </ButtonWrapper>
@@ -55,24 +55,16 @@ const Game: React.SFC<GameProps> = ({ game, log, makeMove, reset }) => {
 };
 
 function mapStateToProps({ game }: AppState) {
-  return {
-    game: game.game,
-    log: game.log
-  };
+  return game;
 }
 
-function mapDispatchToProps(dispatch: Dispatch<GameAction>) {
+function mapDispatchToProps(dispatch: any) {
   return {
-    makeMove: (index: number) => {
-      dispatch({
-        type: MAKE_MOVE,
-        payload: { index }
-      });
+    takeTurn: (index: number) => {
+      dispatch(takeTurn(index));
     },
     reset: () => {
-      dispatch({
-        type: RESET
-      });
+      dispatch(reset());
     }
   };
 }

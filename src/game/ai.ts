@@ -1,6 +1,8 @@
+import { Computer, Level } from "./../types";
 import { getAvailableSpots } from "./board";
 import { getNextState, getNextPlayer, getWinner, isOver } from "./game";
 import { Game, Player } from "../types";
+import { zip } from "./utils";
 
 const STARTING_SCORE = 10;
 
@@ -31,7 +33,7 @@ function minimax(game: Game, player: Player): number[] {
   let depth = 0;
   const { board, players } = game;
   const availableSpots = getAvailableSpots(board);
-  const scores = availableSpots.map(spot => {
+  return availableSpots.map(spot => {
     const possibleGameState = getNextState(game, spot);
     if (isOver(possibleGameState.board, players)) {
       return getScore(possibleGameState, depth);
@@ -44,21 +46,41 @@ function minimax(game: Game, player: Player): number[] {
       );
     }
   });
-  return scores;
 }
 
-export function getBestMove(game: Game) {
+function getBestMove(game: Game) {
   const { board } = game;
+
   const availableSpots = getAvailableSpots(board);
   const scores: number[] = minimax(
     game,
     (game.currentPlayer = game.players[0])
   );
   const maxScore = Math.max(...scores);
-  const zippedScores = availableSpots.map((spot, i) => {
-    return [spot, scores[i]];
-  });
+  const zippedScores = zip(availableSpots, scores);
 
   const [spot] = zippedScores.find(([_spot, score]) => score === maxScore)!;
   return spot;
+}
+
+function getRandomMove(game: Game) {
+  const { board } = game;
+  const availableSpots = getAvailableSpots(board);
+  const index = Math.floor(Math.random() * availableSpots.length);
+  return availableSpots[index];
+}
+
+export function getAIMove(game: Game) {
+  const currentPlayer = game.currentPlayer as Computer;
+  switch (currentPlayer.level) {
+    case Level.Easy: {
+      return getRandomMove(game);
+    }
+    case Level.Hard: {
+      return getBestMove(game);
+    }
+    default: {
+      throw new Error();
+    }
+  }
 }

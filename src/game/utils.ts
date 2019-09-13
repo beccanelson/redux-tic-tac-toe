@@ -1,3 +1,4 @@
+import { GameState } from "./../types";
 import { Board, Human, PlayerType, Computer, Level, Game } from "../types";
 
 export function createBoard(formattedString: string, placeholder = "-"): Board {
@@ -27,17 +28,18 @@ const player2: Computer = {
   name: "Player 2",
   marker: "🤖",
   type: PlayerType.Computer,
-  level: Level.Easy
+  level: Level.Hard
 };
 
 export const DEFAULT_STATE: Game = {
   board: INITIAL_BOARD,
   players: [player1, player2],
   winner: undefined,
+  currentPlayer: player1,
   done: false
 };
 
-export function getInitialState(props: Partial<Game> = {}) {
+export function getInitialState(props: Partial<Game> = {}): GameState {
   return {
     game: {
       ...DEFAULT_STATE,
@@ -46,4 +48,10 @@ export function getInitialState(props: Partial<Game> = {}) {
     },
     log: [] as string[]
   };
+}
+
+export function zip(arr1: any[], arr2: any[]) {
+  return arr1.map((value, i) => {
+    return [value, arr2[i]];
+  });
 }

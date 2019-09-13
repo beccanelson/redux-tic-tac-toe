@@ -65,7 +65,7 @@ describe("game reducer", () => {
               ...board,
               8: player1.marker
             },
-            currentPlayer: undefined,
+            currentPlayer: player2,
             done: true,
             winner: player1
           },
